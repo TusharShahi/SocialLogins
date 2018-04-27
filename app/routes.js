@@ -6,6 +6,23 @@ module.exports = function(app, passport) {
     });
 
     // route for login form
+    app.post('/signup',function(req,res)
+    {
+                    var newUser            = new User();
+
+                    newUser.facebook.id    = req.input.id; // set the users facebook id                   
+                    newUser.facebook.token = token; // we will save the token that facebook provides to the user                    
+                    newUser.facebook.name  = req.input.name; // look at the passport user profile to see how names are returned
+                    newUser.facebook.email = req.input.email; // facebook can return multiple emails so we'll take the first
+
+                    newUser.save(function(err) {
+                        if (err)
+                            throw err;
+
+                        return done(null, newUser);
+                    });
+    });
+
     // route for processing the login form
     // route for signup form
     // route for processing the signup form

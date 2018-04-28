@@ -1,3 +1,16 @@
+function makeid() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 5; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
+
+
+
+
 module.exports = function(app, passport) {
 
     // route for home page
@@ -10,10 +23,10 @@ module.exports = function(app, passport) {
     {
                     var newUser            = new User();
 
-                    newUser.facebook.id    = req.input.id; // set the users facebook id                   
-                    newUser.facebook.token = token; // we will save the token that facebook provides to the user                    
-                    newUser.facebook.name  = req.input.name; // look at the passport user profile to see how names are returned
-                    newUser.facebook.email = req.input.email; // facebook can return multiple emails so we'll take the first
+                    newUser.name = req.body.name;
+                    newUser.email   = req.body.id; // set the users facebook id                   
+                    newUser.facebooktoken = null; // we will save the token that facebook provides to the user                    
+                    newUser.id = makeid();
 
                     newUser.save(function(err) {
                         if (err)
@@ -42,14 +55,12 @@ module.exports = function(app, passport) {
       scope : ['public_profile', 'email']
     }));
 
-    // handle the callback after facebook has authenticated the user
     app.get('/auth/facebook/callback',
         passport.authenticate('facebook', {
             successRedirect : '/profile',
             failureRedirect : '/'
         }));
 
-    // route for logging out
     app.get('/logout', function(req, res) {
         req.logout();
         res.redirect('/');
@@ -57,13 +68,10 @@ module.exports = function(app, passport) {
 
 };
 
-// route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
 
-    // if user is authenticated in the session, carry on
     if (req.isAuthenticated())
         return next();
 
-    // if they aren't redirect them to the home page
     res.redirect('/');
 }

@@ -34,6 +34,8 @@ module.exports = function(app, passport) {
 
                         return done(null, newUser);
                     });
+
+                    res.redirect('/profile');
     });
 
     // route for processing the login form
